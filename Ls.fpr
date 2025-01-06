@@ -3,10 +3,6 @@ program Ls;
 uses
   LsParams, LsFiles;
 
-const
-  ItemName = 'System.ItemNameDisplay';
-  ItemType = 'System.Kind';
-
 var
   DefaultParameters,
   ParsedParameters,
