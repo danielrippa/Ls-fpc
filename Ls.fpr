@@ -1,0 +1,28 @@
+program Ls;
+
+uses
+  LsParams, LsFiles;
+
+const
+  ItemName = 'System.ItemNameDisplay';
+  ItemType = 'System.Kind';
+
+var
+  DefaultParameters,
+  ParsedParameters,
+  MergedParameters: TLsParams;
+
+begin
+
+  with DefaultParameters do begin
+    FolderPath := '.';
+    FileSpec := '*.*';
+    Columns := [ 'System.ItemNameDisplay', 'System.ItemTypeText', 'System.Kind', 'System.DateCreated' ];
+  end;
+
+  ParsedParameters := ParseCommandLineParameters;
+  MergedParameters := MergeParameters(DefaultParameters, ParsedParameters);
+
+  EnumerateFiles(MergedParameters);
+
+end.
