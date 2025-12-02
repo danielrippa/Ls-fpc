@@ -18,57 +18,40 @@ interface
   procedure Fail(Message: String = ''; ErrorLevel: Integer = 1);
 
   function VariantAsString(Value: OleVariant): String;
+  function PerceivedTypeToString(Value: Integer): String;
 
 implementation
 
   uses
-    Variants, Windows;
+    Variants, Windows, ShlWapi;
+
+  function PerceivedTypeToString;
+  begin
+    case Value of
+      -2: Result := 'custom';
+      -1: Result := 'unspecified';
+      0: Result := 'folder';
+      1: Result := 'text';
+      2: Result := 'application';
+      3: Result := 'image';
+      4: Result := 'audio';
+      5: Result := 'video';
+      6: Result := 'compressed';
+      7: Result := 'document';
+      8: Result := 'system';
+      else Result := IntToStr(Value);
+    end;
+  end;
+
+  function PathMatchSpecA(pszFile, pszSpec: PAnsiChar): BOOL; stdcall; external 'shlwapi.dll' name 'PathMatchSpecA';
 
   function MatchesMask;
-  var
-    i, j: Integer;
-    Star: Boolean;
   begin
-
     if (Mask = '*.*') and (Pos('.', Filename) = 0) then begin
       Exit(True);
     end;
 
-    i := 1;
-    j := 1;
-    Star := False;
-
-    while i <= Length(FileName) do begin
-      if j <= Length(Mask) then begin
-        if Mask[j] = '*' then begin
-          Star := True;
-          Inc(j);
-        end else if Mask[j] = '?' then begin
-          Inc(i);
-          Inc(j);
-        end else if FileName[i] = Mask[j] then begin
-          Inc(i);
-          Inc(j);
-        end else if Star then begin
-          Inc(i);
-        end else begin
-          Result := False;
-          Exit;
-        end
-      end else if Star then begin
-        Inc(i);
-      end else begin
-        Result := False;
-        Exit;
-      end
-    end;
-
-    while (j <= Length(Mask)) and (Mask[j] = '*') do begin
-      Inc(j);
-    end;
-
-    Result := (j > Length(Mask)) and (i > Length(FileName));
-
+    Result := PathMatchSpecA(PAnsiChar(AnsiString(Filename)), PAnsiChar(AnsiString(Mask)));
   end;
 
   function MatchesFileSpec;

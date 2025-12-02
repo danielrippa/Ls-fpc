@@ -50,16 +50,16 @@ implementation
     end;
   end;
 
-  function GetItemDetails(Folder: IShellFolder2; Item: PItemIDList; ColumnID: SHCOLUMNID): String;
+  function GetItemDetails(Folder: IShellFolder2; Item: PItemIDList; ColumnID: SHCOLUMNID; ColumnName: String): String;
   var
     Value: OleVariant;
-    VarTypeDesc: string;
-    I: Integer;
-
   begin
     Result := '';
     if Succeeded(Folder.GetDetailsEx(Item, @ColumnID, @Value)) then begin
       Result := VariantAsString(Value);
+      if ColumnName = 'System.PerceivedType' then begin
+        Result := PerceivedTypeToString(StrToIntDef(Result, -1));
+      end;
     end;
   end;
 
@@ -71,9 +71,9 @@ implementation
     Item: PItemIDList;
     DisplayName: String;
     ColumnIDs: TSHColumnIDArray;
-    ColumnID: SHCOLUMNID;
-    Value: OleVariant;
     StringValue: String;
+    Column: String;
+    ColumnIndex: Integer;
   begin
     CoInitialize(Nil);
     try
@@ -81,6 +81,13 @@ implementation
       SetLength(ColumnIDs, 0);
 
       Folder := GetShellFolder2(Parameters.FolderPath);
+
+      ColumnIDs := GetColumnIDs(Parameters.Columns);
+
+      for Column in Parameters.Columns do begin
+        Write(Format('%s|', [Column]));
+      end;
+      WriteLn;
 
       if Succeeded(Folder.EnumObjects(0, FOLDERS or NONFOLDERS or HIDDEN {* or SUPERHIDDEN *}, List)) then begin
 
@@ -90,16 +97,8 @@ implementation
 
           if MatchesFileSpec(DisplayName, Parameters.FileSpec) then begin
 
-            if Length(ColumnIDs) = 0 then begin
-
-              for ColumnID in GetColumnIDs(Parameters.Columns) do begin
-                SetLength(ColumnIDs, Length(ColumnIDs) + 1);
-                ColumnIDs[High(ColumnIDs)] := ColumnID;
-              end;
-            end;
-
-            for ColumnID in ColumnIDs do begin
-              StringValue := GetItemDetails(Folder, Item, ColumnID);
+            for ColumnIndex := 0 to Length(ColumnIDs) - 1 do begin
+              StringValue := GetItemDetails(Folder, Item, ColumnIDs[ColumnIndex], Parameters.Columns[ColumnIndex]);
               Write(Format('%s|', [StringValue]));
             end;
 
