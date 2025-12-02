@@ -117,6 +117,7 @@ implementation
       varWord: Result := IntToStr(Value);
       varLongWord: Result := IntToStr(Value);
       varInt64: Result := IntToStr(Value);
+      varQWord: Result := IntToStr(Value);
       varSingle: Result := FloatToStr(Value);
       varDouble: Result := FloatToStr(Value);
 
