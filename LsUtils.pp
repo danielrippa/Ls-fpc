@@ -109,8 +109,8 @@ implementation
 
     case VarType(Value) of
 
-      varEmpty: Result := 'Empty';
-      varNull: Result := 'Null';
+      varEmpty: Result := '';
+      varNull: Result := '';
       varSmallint: Result := IntToStr(Value);
       varInteger: Result := IntToStr(Value);
       varByte: Result := IntToStr(Value);
@@ -156,12 +156,12 @@ implementation
                     Result := Result + VarToWideStr(Value[I]);
                   end;
                   if I < VarArrayHighBound(Value, 1) then begin
-                    Result := Result + ', ';
+                    Result := Result + ',';
                   end;
                 end else begin
                   Result := Result + 'Unsupported array element type';
                   if I < VarArrayHighBound(Value, 1) then begin
-                    Result := Result + ', ';
+                    Result := Result + ',';
                   end;
                 end;
               end;

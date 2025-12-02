@@ -13,7 +13,7 @@ begin
   with DefaultParameters do begin
     FolderPath := '.';
     FileSpec := '*.*';
-    Columns := [ 'System.ItemNameDisplay', 'System.PerceivedType', 'System.ItemTypeText', 'System.Kind', 'System.DateCreated', 'Tags' ];
+    Columns := [ 'System.ItemNameDisplay', 'System.PerceivedType', 'System.ItemTypeText', 'System.Kind', 'System.DateCreated', 'System.Keywords', 'Tags' ];
   end;
 
   ParsedParameters := ParseCommandLineParameters;
