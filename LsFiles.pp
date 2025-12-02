@@ -62,7 +62,7 @@ implementation
     Tags: String;
   begin
     Result := '';
-    StreamPath := FilePath + ':keywords.txt';
+    StreamPath := FilePath + ':tags.txt';
     
     if not FileExists(StreamPath) then begin
       Exit;
